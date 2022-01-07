@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import user from '../store/user';
+
 	import directus from '$lib/directus';
 	let credentials = {
 		email: '',
@@ -7,14 +10,14 @@
 	let authenticated = false;
 	let loading = true;
 	let submitting = false;
-	let me = {};
 	directus.auth
 		.refresh()
 		.then(() => {
-			directus.users.me.read().then((user) => {
-				me = user;
+			directus.users.me.read().then((me) => {
+				$user = me;
 			});
 			authenticated = true;
+			goto('/notes');
 		})
 		.catch(() => {
 			// Intentional no-op for refresh token failure
@@ -27,7 +30,7 @@
 		try {
 			await directus.auth.login(credentials);
 			authenticated = true;
-			me = await directus.users.me.read();
+			$user = await directus.users.me.read();
 		} catch (e) {
 			console.log(e);
 		} finally {
@@ -68,5 +71,5 @@
 </form>
 <pre>
   {JSON.stringify(credentials, null, 2)}
-	{JSON.stringify({ authenticated, submitting, me }, null, 2)}
+	{JSON.stringify({ authenticated, submitting, $user }, null, 2)}
 </pre>
