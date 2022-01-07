@@ -8,12 +8,16 @@
 	let displayScan = false;
 	const loadNotes = async () => {
 		let authenticated = false;
-		// Try to authenticate with token if exists
-		await directus.auth.refresh();
-		$user = await directus.users.me.read();
-		authenticated = true;
-		const fetchedData = await directus.items('notes').readMany();
-		notes = fetchedData.data;
+		try {
+			// Try to authenticate with token if exists
+			await directus.auth.refresh();
+			$user = await directus.users.me.read();
+			authenticated = true;
+			const fetchedData = await directus.items('notes').readMany();
+			notes = fetchedData.data;
+		} catch (e) {
+			console.log(e);
+		}
 	};
 	loadNotes();
 
@@ -32,6 +36,23 @@
 				func.apply(this, args);
 			}, timeout);
 		};
+	};
+	const enhance = async () => {
+		const result = await fetch('/api/enhance', {
+			method: 'POST',
+			body: JSON.stringify({
+				text: $currentNote.ocr
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		const jsonRes = await result.json();
+		console.log(jsonRes);
+		const updatedNote = await directus.items('notes').updateOne($currentNote.id, {
+			ai: jsonRes.data.replace('\n\nCorrected:\n', '')
+		});
+		$currentNote = updatedNote;
 	};
 	$: {
 		debounce(() => {
@@ -89,7 +110,9 @@
 						<option disabled={!$currentNote.ai} value="ai">AI</option>
 						<option disabled={!$currentNote.corrected} value="corrected">Corrected</option>
 					</select>
-					<button class="btn">Submit to AI</button>
+					<button class="btn" on:click={() => enhance()} disabled={$currentNote.ai}
+						>Submit to AI</button
+					>
 				</div>
 
 				<div class="whitespace-pre font-light">
