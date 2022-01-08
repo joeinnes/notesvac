@@ -4,7 +4,7 @@ export async function onRequest(context) {
     env, // same as existing Worker API
     // params
   } = context;
-  const apiUrl = env.API_URL;
+  const apiUrl = env.VITE_API_URL;
   const newReq = new Request(apiUrl, request);
   newReq.headers.set("Origin", new URL(apiUrl).origin)
 
