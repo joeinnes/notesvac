@@ -1,5 +1,5 @@
 <script lang="ts">
-	import image from '/notebook.svg';
+	import image from 'images/notebook.svg';
 </script>
 
 <div class="max-w-5xl mx-auto my-4">

@@ -3,7 +3,7 @@
 	import type { Note } from '$lib/directus';
 	import user from '../store/user';
 	import currentNote from '../store/currentNote';
-	import image from '/coffee.svg';
+	import image from 'images/coffee.svg';
 	let notes = [];
 	let filter = '';
 	let display = 'ocr';

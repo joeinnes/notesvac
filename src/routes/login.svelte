@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import user from '../store/user';
-	import image from '/skateboard.svg';
+	import image from 'images/skateboard.svg';
 
 	import directus from '$lib/directus';
 	let credentials = {
