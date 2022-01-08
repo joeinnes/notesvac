@@ -1,7 +1,3 @@
-<script lang="ts">
-	import image from 'images/notebook.svg';
-</script>
-
 <div class="max-w-5xl mx-auto my-4">
 	<h1 class="font-extrabold text-7xl mb-4">NotesVac</h1>
 	<div class="grid grid-cols-2 gap-4">
@@ -20,6 +16,6 @@
 		</div>
 	</div>
 	<div class="w-1/2 mx-auto">
-		<img src={image} alt="NotesVac Illustration" class="aspect-square w-full" />
+		<img src="images/notebook.svg" alt="NotesVac Illustration" class="aspect-square w-full" />
 	</div>
 </div>

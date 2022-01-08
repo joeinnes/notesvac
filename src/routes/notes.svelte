@@ -3,7 +3,6 @@
 	import type { Note } from '$lib/directus';
 	import user from '../store/user';
 	import currentNote from '../store/currentNote';
-	import image from 'images/coffee.svg';
 	let notes = [];
 	let filter = '';
 	let display = 'ocr';
@@ -191,7 +190,7 @@
 					/>
 				</div>
 			{:else}
-				<img src={image} alt="No note selected" class="w-1/2 aspect-square mx-auto" />
+				<img src="images/coffee.svg" alt="No note selected" class="w-1/2 aspect-square mx-auto" />
 				<p class="text-center">Pick a note to get started</p>
 			{/if}
 		</div>

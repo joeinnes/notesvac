@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import user from '../store/user';
-	import image from 'images/skateboard.svg';
 
 	import directus from '$lib/directus';
 	let credentials = {
@@ -87,7 +86,7 @@
 		</form>
 	</div>
 	<div>
-		<img src={image} alt="Log In illustration" class="w-full aspect-square" />
+		<img src="images/skateboard.svg" alt="Log In illustration" class="w-full aspect-square" />
 	</div>
 	<div class="modal {error ? 'modal-open' : ''}">
 		<div class="modal-box">
