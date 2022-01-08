@@ -39,9 +39,7 @@
 	const enhance = async () => {
 		const result = await fetch('/api/enhance', {
 			method: 'POST',
-			body: JSON.stringify({
-				text: $currentNote.ocr
-			}),
+			body: $currentNote.ocr,
 			headers: {
 				'Content-Type': 'application/json'
 			}

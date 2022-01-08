@@ -1,3 +1,4 @@
+import type { RequestHandler } from "@sveltejs/kit";
 import openai from "../../lib/openai";
 
 const defaultPromptText = `Make correct English.
@@ -46,10 +47,10 @@ Ingredients
 Original:
 `
 
-export async function post(request) {
+export const post: RequestHandler = async function (request) {
   const gptResponse = await openai.complete({
     engine: 'davinci-instruct-beta-v3',
-    prompt: defaultPromptText + request.body.text,
+    prompt: defaultPromptText + request.body,
     maxTokens: 512,
     temperature: 1,
     topP: 1,
@@ -60,6 +61,5 @@ export async function post(request) {
     stream: false,
     stop: ['Original:']
   });
-  console.log(gptResponse.data);
   return ({ status: 200, body: { data: gptResponse.data.choices[0].text } });
 }
