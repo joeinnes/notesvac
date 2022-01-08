@@ -16,7 +16,9 @@ type NotesVacApp = {
   notes: Note;
 }
 
-const directus = new Directus<NotesVacApp>(import.meta.env.VITE_API_URL as string);
+const url = "" + import.meta.env.VITE_API_URL;
+
+const directus = new Directus<NotesVacApp>(url);
 
 export default directus;
 export type { Note };
