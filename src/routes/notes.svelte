@@ -180,7 +180,8 @@
 					</div>
 					<h3 class="text-neutral-content mb-2">Original Scan</h3>
 					<embed
-						src={'/api/assets/' +
+						src={import.meta.env.VITE_API_URL +
+							'/assets/' +
 							$currentNote.original_scan +
 							'#toolbar=0&navpanes=0&scrollbar=0&view=Fit'}
 						type="application/pdf"
