@@ -13,9 +13,9 @@ const config = {
 
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-		ssr: false,
+		ssr: false
 
-		vite: {
+		/*		vite: {
 			server: {
 				proxy: {
 					'/api': {
@@ -27,7 +27,7 @@ const config = {
 					}
 				}
 			}
-		}
+		}*/
 	}
 };
 
