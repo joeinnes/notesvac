@@ -30,9 +30,7 @@
 		on:click={() => (showFooter = !showFooter)}
 	>
 		<div
-			class="transform {showFooter
-				? ''
-				: '-translate-y-full'} bg-grayscale-700 text-grayscale-100 inline-block ml-2 px-4 rounded-t-xl cursor-pointer"
+			class="absolute transform -translate-y-full bg-grayscale-700 text-grayscale-100 inline-block ml-2 px-4 rounded-t-xl cursor-pointer right-4"
 		>
 			Footer
 		</div>
