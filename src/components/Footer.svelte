@@ -10,8 +10,8 @@
 	</ul>
 	<ul>
 		<li><span class="font-black mb-4">Legal</span></li>
-		<li><a class="link link-hover">Terms of use</a></li>
-		<li><a class="link link-hover">Privacy policy</a></li>
-		<li><a class="link link-hover">Cookie policy</a></li>
+		<li><a class="link link-hover" href="/pages/terms">Terms of use</a></li>
+		<li><a class="link link-hover" href="/pages/privacy">Privacy policy</a></li>
+		<li><a class="link link-hover" href="/pages/cookies">Cookie policy</a></li>
 	</ul>
 </footer>

@@ -36,6 +36,11 @@ v2.0.0
 
 Name is inspired by the Multi-/Micro-vac computers created by Isaac Asimov.
 
+# Thanks
+
+- Illustrations courtesy of ManyPixels.co.
+- Icons thanks to Phospor Icons (and the Svelte port: phosphor-svelte)
+
 # Disclaimer
 
 No warranty is provided. This software is provided "as is". Use at your own risk. The author is not responsible for any damages caused by this software. No guarantees are provided about the accuracy, functionality, security, or interoperability of this software.

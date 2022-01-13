@@ -57,56 +57,60 @@
 
 <svelte:head><title>NotesVac | Notes</title></svelte:head>
 
-<div class="flex flex-col flex-1 items-stretch">
-	<div class="flex flex-1 items-stretch">
-		<div class="w-1/3 py-4 px-8 bg-grayscale-100 self-stretch border-r  shadow">
-			<h2 class="text-2xl font-extrabold">Your Notes</h2>
-			<div class="mr-2 flex items-center">
+<div class="flex flex-col flex-1 items-stretch h-full">
+	<div class="flex flex-1 items-stretch h-full">
+		<div class="w-1/3 bg-grayscale-100 self-stretch h-full shadow flex flex-col">
+			<div class="flex-1 h-full py-4 px-8">
+				<h2 class="text-2xl font-extrabold">Your Notes</h2>
+
+				<input type="text" placeholder="Search..." bind:value={filter} class="w-full" />
+				{#if loading}
+					<div class="w-full flex items-center justify-center pt-8">
+						<span class="animate-spin">
+							<SpinnerGap size={52} weight="duotone" />
+						</span>
+					</div>
+				{:else if notes.length}
+					<div class="overflow-y-auto flex-1">
+						{#each notes as note, index}
+							<div
+								class="py-2 {index < notes.length - 1 ? 'border-b' : ''}"
+								on:click={() => ($currentNote = note)}
+							>
+								<h3 class="text-lg flex items-center">
+									{note.title}
+								</h3>
+								<small class="text-grayscale-600 text-xs">
+									{new Date(note.date_created).toLocaleString('en-GB', {
+										weekday: 'short',
+										year: 'numeric',
+										month: 'short',
+										day: '2-digit',
+										hour: 'numeric',
+										minute: '2-digit',
+										hourCycle: 'h11'
+									})}
+								</small>
+								<p class="truncate text-sm mt-2">
+									{note.corrected?.split('\n')[0] ??
+										note.ai?.split('\n')[0] ??
+										note.ocr?.split('\n')[0]}
+								</p>
+							</div>
+						{/each}
+					</div>
+				{:else}
+					<div>You haven't taken any notes yet!</div>
+				{/if}
+			</div>
+			<div
+				class="flex items-center p-4 bg-grayscale-400 text-xl shadow border-t border-grayscale-300"
+			>
 				<UserCircle weight="duotone" />
 				<span class="ml-2 block">{$user?.first_name} {$user?.last_name}</span>
 			</div>
-
-			<input type="text" placeholder="Search" bind:value={filter} class="w-full" />
-			{#if loading}
-				<div class="w-full	flex items-center justify-center pt-8">
-					<span class="animate-spin">
-						<SpinnerGap size={52} weight="duotone" />
-					</span>
-				</div>
-			{:else if notes.length}
-				<div>
-					{#each notes as note, index}
-						<div
-							class="py-2 {index < notes.length - 1 ? 'border-b' : ''}"
-							on:click={() => ($currentNote = note)}
-						>
-							<h3 class="text-lg flex items-center">
-								{note.title}
-							</h3>
-							<small class="text-grayscale-600 text-xs">
-								{new Date(note.date_created).toLocaleString('en-GB', {
-									weekday: 'short',
-									year: 'numeric',
-									month: 'short',
-									day: '2-digit',
-									hour: 'numeric',
-									minute: '2-digit',
-									hourCycle: 'h11'
-								})}
-							</small>
-							<p class="truncate text-sm mt-2">
-								{note.corrected?.split('\n')[0] ??
-									note.ai?.split('\n')[0] ??
-									note.ocr?.split('\n')[0]}
-							</p>
-						</div>
-					{/each}
-				</div>
-			{:else}
-				<div>You haven't taken any notes yet!</div>
-			{/if}
 		</div>
-		<div class="w-2/3 p-4 pb-16">
+		<div class="w-2/3 p-4 pb-16 overscroll-none">
 			<Note {filter} />
 		</div>
 	</div>

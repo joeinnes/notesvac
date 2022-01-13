@@ -1,6 +1,6 @@
 {
 	"name": "notesvac",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"scripts": {
 		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",
@@ -37,8 +37,6 @@
 		"@directus/sdk": "^9.4.2",
 		"@fontsource/inconsolata": "^4.5.0",
 		"@fontsource/karla": "^4.5.0",
-		"@supabase/supabase-js": "^1.29.1",
-		"daisyui": "^1.21.0",
 		"dotenv": "^10.0.0",
 		"openai-api": "^1.2.6"
 	}
