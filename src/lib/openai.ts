@@ -1,6 +1,4 @@
 import OpenAI from 'openai-api';
-import dotenv from 'dotenv';
-dotenv.config();
 
 // Load your key from an environment variable or secret management service
 // (do not include your key directly in your code)

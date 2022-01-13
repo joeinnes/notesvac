@@ -1,15 +1,12 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import openai from "../../lib/openai";
 
-const defaultPromptText = `Incorrect:
+const defaultPromptText = `Correct the sentences.
+
+Incorrect:
 I think WE GOT AWAY WITH IT BUT PLEASE Makes Sure UPDATES ARE TIMELY IN 2022.
 Correct:
 I think we got away with it but please make sure updates are timely in 2022.
----
-Incorrect:
-Pour BATTER INTO TINS CAREFULLY TO AUDIO HOT OIL SPLASHES
-Correct:
-Pour batter into tins carefully to avoid hot oil splashes
 ---
 Incorrect:
 I'LL BE DOING SOME HOUSEKEEPING CCANCELLINO & RESCHEDULING CALLS, ETC.) IN THE NEXT weak or so. IF ANYONE WANTS TO CHANGE TIMESLOT, PLEASE LET ME Know
@@ -20,6 +17,14 @@ Incorrect:
 `
 
 export const post: RequestHandler = async function (request) {
+
+  // User will have a refresh token
+  // Request a new access token from Directus
+  // Validate user may use OpenAI
+  // Request OpenAI to enhance the text
+  // Return the enhanced text
+  // Add the tokens used to the user's token count
+
   try {
     const uploaded = request.body.content;
     const removePageNumbers = uploaded.replace(/^Page ([0-9]*)\n\n/, ' ');
@@ -29,13 +34,14 @@ export const post: RequestHandler = async function (request) {
     const stripLines = removedTitle.replaceAll('\n\n', " ");
     const breakdownSentences = punctuateEndOfBullets.replace(/([^-]|[.?!])\s*(?=[A-Z])/g, "$1|").split("|");
     let parsed = '';
+    let tokenCount = 0;
     for (const sentence of breakdownSentences) {
       const { data } = await openai.complete({
-        engine: 'davinci',
+        engine: 'davinci-instruct-beta-v3',
         prompt: defaultPromptText + sentence.trim() + `
       Correct:`,
         maxTokens: 200,
-        temperature: 0.3,
+        temperature: 0,
         topP: 1,
         presencePenalty: 0,
         frequencyPenalty: 0,
@@ -45,8 +51,10 @@ export const post: RequestHandler = async function (request) {
         stop: ['Correct:', 'Incorrect:', '---', 'Corrected Version']
       });
       console.log(sentence, '-->', data.choices[0].text);
+      tokenCount = tokenCount + 160 + Math.ceil(sentence.trim().length / 4) + Math.ceil(data.choices[0].text.length / 4);
       parsed = parsed + ' ' + data.choices[0].text;
     }
+    // TODO: Save token count used by this user for billing purposes
     return ({
       status: 200,
       body: { data: parsed }
