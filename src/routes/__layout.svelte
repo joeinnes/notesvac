@@ -1,6 +1,8 @@
 <script>
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
+	import '@fontsource/inconsolata';
+	import '@fontsource/karla';
 	import '../app.css';
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
@@ -14,10 +16,19 @@
 
 <svelte:head><title>NotesVac</title></svelte:head>
 
-<div>
-	<div class="min-h-screen">
-		<Header />
+<div class="flex flex-col relative min-h-screen bg-grayscale-50">
+	<Header />
+	<div class="flex-1 h-full">
 		<slot />
 	</div>
-	<Footer />
 </div>
+<Footer />
+
+<style>
+	:global(body) {
+		font-family: 'Inconsolata', monospace;
+	}
+	:global(h1, h2, h3, h4, h5, h6) {
+		font-family: 'Karla', serif;
+	}
+</style>

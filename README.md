@@ -1,18 +1,18 @@
-# Notesvac
+# NotesVac
 
 # What it does
 
-Notesvac receives notes from Rocketbook in PDF form, with OCR transcriptions, and stores them in a searchable database.
+NotesVac receives notes from Rocketbook in PDF form, with OCR transcriptions, and stores them in a searchable database.
 
 That's not groundbreaking.
 
-The USP for Notesvac is that it can take the OCR transcriptions and improve them using the GPT-3 engine to try to reconstruct the original text.
+The USP for NotesVac is that it can take the OCR transcriptions and improve them using the GPT-3 engine to try to reconstruct the original text.
 
 ## Caveats
 
 An important caveat is that GPT-3 is _not reading_ the original, handwritten note. It's only reading the transcriptions and using AI to try to correct the transcriptions.
 
-For example, if the handwritten note says "I am writing a note" and the transcription says "I am swimming in the sea", then the GPT-3 revision will see correct English, and will not know the note is not correct. However, if the transcription says "I om wreeting a mole", then GPT-3 should be able to correct.
+For example, if the handwritten note says "I am writing a note" and the transcription says "I am swimming in the sea", then the GPT-3 revision will see correct English, and will not know the note is not correct. However, if the transcription says "I om wreeting a moe", then GPT-3 should be able to correct.
 
 It's also worth noting that because GPT-3 is _guessing_, it won't necessarily be correct, and might well actually guess the exact opposite of what the handwritten note says. It also may take creative liberties with what it thinks you might have wanted to say, and add in extra words, phrases or ideas that you did not actually say.
 
@@ -20,12 +20,12 @@ It's also worth noting that because GPT-3 is _guessing_, it won't necessarily be
 
 v1.0.0
 
-- [ ] Log in
-- [ ] Display notes stored in database (show transcribed notes)
-- [ ] Allow manual correction of notes
-- [ ] Allow manual submission to OpenAI to improve the transcription
-- [ ] Display handwritten notes in preview pane
-- [ ] Search notes (full text search)
+- [x] Log in
+- [x] Display notes stored in database (show transcribed notes)
+- [x] Allow manual correction of notes
+- [x] Allow manual submission to OpenAI to improve the transcription
+- [x] Display handwritten notes in preview pane
+- [x] Search notes (full text search)
 
 v2.0.0
 

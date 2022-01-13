@@ -2,6 +2,8 @@
 	import { goto } from '$app/navigation';
 	import directus from '$lib/directus';
 	import user from '../store/user';
+	import { SignIn, SignOut } from 'phosphor-svelte';
+	import Button from './Button.svelte';
 
 	let loading = false;
 	const logout = async () => {
@@ -13,21 +15,24 @@
 	};
 </script>
 
-<div class="grid grid-cols-3 items-center px-10 py-6 bg-primary text-center">
+<div
+	class="grid grid-cols-3 justify-center items-center px-10 py-6 bg-primary-900 text-primary-100 text-center shadow"
+>
 	<div />
 	<h1 class="font-bold text-4xl"><a href={$user ? '/notes' : '/'}>NotesVac</a></h1>
-	<div class="text-right">
+	<div class="flex justify-end items-center">
 		{#if $user}
-			<div class="flex">
-				<div class="mr-2">
-					<span class="block">{$user.first_name} {$user.last_name}</span>
-					<span class="block">{$user.email}</span>
-				</div>
-
-				<button class="btn" on:click={logout}>Log Out</button>
+			<div>
+				<Button clickHandler={logout} type="primary"
+					>Log Out&nbsp;<SignOut weight="duotone" /></Button
+				>
 			</div>
 		{:else}
-			<button class="btn" on:click={() => goto('/login')}>Log In</button>
+			<div>
+				<Button clickHandler={() => goto('/login')} type="primary">
+					Log In&nbsp;<SignIn weight="duotone" /></Button
+				>
+			</div>
 		{/if}
 	</div>
 </div>
