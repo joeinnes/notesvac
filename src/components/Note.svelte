@@ -61,8 +61,8 @@
 </script>
 
 {#if $currentNote}
-	<div class="flex items-start justify-between">
-		<div class="w-full max-w-prose">
+	<div class="flex items-start justify-between h-full">
+		<div class="w-full max-w-prose h-full">
 			<div class="flex items-center gap-2 justify-start pb-2">
 				<div>
 					<select bind:value={display}>
@@ -85,7 +85,10 @@
 					>
 				</div>
 			</div>
-			<div class="bg-yellow-100 shadow rounded p-4">
+			<div
+				class="bg-yellow-100 shadow rounded p-4 max-h-full overflow-y-auto"
+				style="scrollbar-gutter: stable"
+			>
 				<h3 class="text-3xl mb-4 font-extrabold">{$currentNote.title}</h3>
 				<div class="mb-4 font-extralight text-base-content text-xs">
 					{new Date($currentNote.date_created).toLocaleString('en-GB', {
@@ -116,9 +119,10 @@
 				{/if}
 			</div>
 		</div>
-		<div class="flex flex-col flex-1 px-8">
+		<div class="flex flex-col flex-1 px-8 h-full">
 			<h3 class="mb-3 text-2xl font-extrabold">Original Scan</h3>
 			{#key $currentNote}
+				<!-- note that the aspect ratio here probably won't work because the space on the page will probably be taller and narrower -->
 				<object
 					title="Original Scan"
 					data={import.meta.env.VITE_API_URL +
@@ -126,9 +130,10 @@
 						$currentNote?.original_scan +
 						'?access_token=' +
 						auth_token +
-						'#toolbar=0&navpanes=0&scrollbar=0&statusbar=0&messages=0&view=Fit'}
+						'#toolbar=0&navpanes=0&scrollbar=0&statusbar=0&messages=0&view=FitH'}
 					type="application/pdf"
-					style="width: 100%; aspect-ratio: 2/3;"
+					class="w-full max-h-full overscroll-none"
+					style="aspect-ratio: 2/3;"
 				/>
 			{/key}
 		</div>

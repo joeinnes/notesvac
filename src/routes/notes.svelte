@@ -57,9 +57,9 @@
 
 <svelte:head><title>NotesVac | Notes</title></svelte:head>
 
-<div class="flex flex-col flex-1 items-stretch">
-	<div class="flex flex-1 items-stretch">
-		<div class="w-1/3 py-4 px-8 bg-grayscale-100 self-stretch border-r  shadow">
+<div class="flex flex-col flex-1 items-stretch h-full">
+	<div class="flex flex-1 items-stretch h-full">
+		<div class="w-1/3 py-4 px-8 bg-grayscale-100 self-stretch border-r h-full shadow">
 			<h2 class="text-2xl font-extrabold">Your Notes</h2>
 			<div class="mr-2 flex items-center">
 				<UserCircle weight="duotone" />
@@ -68,13 +68,13 @@
 
 			<input type="text" placeholder="Search" bind:value={filter} class="w-full" />
 			{#if loading}
-				<div class="w-full	flex items-center justify-center pt-8">
+				<div class="w-fullflex items-center justify-center pt-8">
 					<span class="animate-spin">
 						<SpinnerGap size={52} weight="duotone" />
 					</span>
 				</div>
 			{:else if notes.length}
-				<div>
+				<div class="overflow-y-auto">
 					{#each notes as note, index}
 						<div
 							class="py-2 {index < notes.length - 1 ? 'border-b' : ''}"
@@ -106,7 +106,7 @@
 				<div>You haven't taken any notes yet!</div>
 			{/if}
 		</div>
-		<div class="w-2/3 p-4 pb-16">
+		<div class="w-2/3 p-4 pb-16 overscroll-none">
 			<Note {filter} />
 		</div>
 	</div>

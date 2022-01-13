@@ -1,6 +1,7 @@
 <script>
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
+	let showFooter = false;
 	import '@fontsource/inconsolata';
 	import '@fontsource/karla';
 	import '../app.css';
@@ -15,14 +16,29 @@
 </script>
 
 <svelte:head><title>NotesVac</title></svelte:head>
-
-<div class="flex flex-col relative min-h-screen bg-grayscale-50">
-	<Header />
-	<div class="flex-1 h-full">
-		<slot />
+<div class="max-h-screen relative overflow-y-hidden">
+	<div class="flex flex-col relative h-screen bg-grayscale-50">
+		<Header />
+		<div class="flex-1 h-full overflow-y-hidden">
+			<slot />
+		</div>
+	</div>
+	<div
+		class="absolute w-full transform bottom-0 {showFooter
+			? ''
+			: 'translate-y-full'} transition-transform duration-200"
+		on:click={() => (showFooter = !showFooter)}
+	>
+		<div
+			class="transform {showFooter
+				? ''
+				: '-translate-y-full'} bg-grayscale-700 text-grayscale-100 inline-block ml-2 px-4 rounded-t-xl cursor-pointer"
+		>
+			Footer
+		</div>
+		<Footer />
 	</div>
 </div>
-<Footer />
 
 <style>
 	:global(body) {
