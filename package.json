@@ -38,7 +38,6 @@
 		"@fontsource/inconsolata": "^4.5.0",
 		"@fontsource/karla": "^4.5.0",
 		"dotenv": "^10.0.0",
-		"openai-api": "^1.2.6",
 		"openai-nodejs": "^1.1.0"
 	}
 }
