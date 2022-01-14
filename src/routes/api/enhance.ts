@@ -3,7 +3,7 @@ import openai from "../../lib/openai";
 const defaultPromptInitial = `Correct the sentences.
 
 Incorrect:
-I think WE GOT AWAY WITH IT BUT PLEASE Makes Sure UPDATES ARE TIMELY IN 2022.
+I think WE GuT AWAY WITH !T BUT PLEASE Makes Sure UPDA4ES ARE TIMELY IN 2022.
 Correct:
 I think we got away with it but please make sure updates are timely in 2022.
 ---
@@ -42,11 +42,10 @@ export const post: RequestHandler = async function (request) {
     for (const item of contentArr) {
       const prompt = defaultPromptInitial + item + defaultPromptEnd;
       tokenCount += openai.tokens(prompt);
-      /*const completion = await openai.complete(prompt, options);
-        const selected = completion.choices[0].text;
-        corrected.push(selected);
-        tokenCount += openai.tokens(selected);
-        */
+      const completion = await openai.complete(prompt, options);
+      const selected = completion.choices[0].text;
+      corrected.push(selected);
+      tokenCount += openai.tokens(selected);
     }
     await fetch(import.meta.env.VITE_API_URL + `/items/tokens_used`, {
       method: 'POST',

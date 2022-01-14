@@ -4,6 +4,7 @@
 	import Button from './Button.svelte';
 	import { CircleWavyCheck, FloppyDisk, MagicWand } from 'phosphor-svelte';
 	import { browser } from '$app/env';
+	import tokensUsed from '../store/tokensUsed';
 	let editMode = false;
 	let working = false;
 	let correctedNote = '';
@@ -33,6 +34,7 @@
 				ai: jsonRes.data.replace('\n\nCorrected:\n', '')
 			});
 			$currentNote.ai = jsonRes.data.replace('\n\nCorrected:\n', '');
+			$tokensUsed += jsonRes.tokensUsed;
 		} catch (e) {
 			console.error(e);
 		} finally {
