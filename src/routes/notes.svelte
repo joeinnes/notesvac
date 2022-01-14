@@ -24,6 +24,9 @@
 				sort: ['-date_created']
 			});
 			notes = fetchedData.data;
+			if (!$user) {
+				return;
+			}
 			const { data } = await directus.items('tokens_used').readMany({
 				filter: {
 					user: {
@@ -38,7 +41,7 @@
 			const { sum } = data[0];
 			$tokensUsed = sum.count;
 		} catch (e) {
-			goto('/login');
+			//goto('/login');
 			console.log(e);
 		} finally {
 			loading = false;
