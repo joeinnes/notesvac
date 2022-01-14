@@ -1,6 +1,15 @@
-export const get = (request) => {
+import type { RequestHandler } from "@sveltejs/kit";
+import(!process.env.CF_PAGES ? 'dotenv/config' : '');
+import openai from "../../lib/openai";
+
+export const post: RequestHandler = async (request) => {
+
+  const encoded = openai.tokens('Hello, world!');
+  console.log(encoded);
+
+  console.log(tokensJson)
   return {
     status: 200,
-    body: request.url.searchParams.get('access_token')
+    body: { access_token, data }
   }
 }

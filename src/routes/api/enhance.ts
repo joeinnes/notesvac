@@ -1,7 +1,6 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import openai from "../../lib/openai";
-
-const defaultPromptText = `Correct the sentences.
+const defaultPromptInitial = `Correct the sentences.
 
 Incorrect:
 I think WE GOT AWAY WITH IT BUT PLEASE Makes Sure UPDATES ARE TIMELY IN 2022.
@@ -9,57 +8,82 @@ Correct:
 I think we got away with it but please make sure updates are timely in 2022.
 ---
 Incorrect:
-I'LL BE DOING SOME HOUSEKEEPING CCANCELLINO & RESCHEDULING CALLS, ETC.) IN THE NEXT weak or so. IF ANYONE WANTS TO CHANGE TIMESLOT, PLEASE LET ME Know
-Correct:
-I'll be doing some housekeeping (cancelling & rescheduling calls, etc.) in the next week or so. If anyone wants to change timeslot please let me know.
----
-Incorrect:
 `
-
+const defaultPromptEnd = `
+Correct:`;
+const options = {
+  engine: 'davinci-instruct-beta-v3',
+  max_tokens: 200,
+  temperature: 0,
+  top_p: 1,
+  presence_penalty: 0,
+  frequency_penalty: 0,
+  best_of: 1,
+  n: 1,
+  stream: false,
+  stop: ['Correct:', 'Incorrect:', '---', 'Correct Sentences']
+};
 export const post: RequestHandler = async function (request) {
-
-  // User will have a refresh token
-  // Request a new access token from Directus
-  // Validate user may use OpenAI
-  // Request OpenAI to enhance the text
-  // Return the enhanced text
-  // Add the tokens used to the user's token count
-
   try {
-    const uploaded = request.body.content;
-    const removePageNumbers = uploaded.replace(/^Page ([0-9]*)\n\n/, ' ');
-    const removePageSeperators = removePageNumbers.replace(/^------*\n/, '\n');
-    const removedTitle = removePageSeperators.replace(/^##(.*?)##\n\n/, ' ');
-    const punctuateEndOfBullets = stripLines.replaceAll('\n\n-', ".\n-");
-    const stripLines = removedTitle.replaceAll('\n\n', " ");
-    const breakdownSentences = punctuateEndOfBullets.replace(/([^-]|[.?!])\s*(?=[A-Z])/g, "$1|").split("|");
-    let parsed = '';
+    const access_token = request.body.access_token;
+    if (!access_token) throw { code: 401, message: 'No access token provided' };
+    const userResp = await fetch(import.meta.env.VITE_API_URL + '/users/me', {
+      headers: {
+        "Authorization": `Bearer ${access_token}`
+      }
+    })
+    const { data } = await userResp.json();
+    if (!data) throw { code: 404, message: 'No user data found' };
+    const { id } = data;
+    if (!request.body.content) throw { code: 400, message: 'No content provided' };
+    const contentArr = prepareText(request.body.content);
+    const corrected: string[] = [];
     let tokenCount = 0;
-    for (const sentence of breakdownSentences) {
-      const { data } = await openai.complete({
-        engine: 'davinci-instruct-beta-v3',
-        prompt: defaultPromptText + sentence.trim() + `
-      Correct:`,
-        maxTokens: 200,
-        temperature: 0,
-        topP: 1,
-        presencePenalty: 0,
-        frequencyPenalty: 0,
-        bestOf: 1,
-        n: 1,
-        stream: false,
-        stop: ['Correct:', 'Incorrect:', '---', 'Corrected Version']
-      });
-      console.log(sentence, '-->', data.choices[0].text);
-      tokenCount = tokenCount + 160 + Math.ceil(sentence.trim().length / 4) + Math.ceil(data.choices[0].text.length / 4);
-      parsed = parsed + ' ' + data.choices[0].text;
+    for (const item of contentArr) {
+      const prompt = defaultPromptInitial + item + defaultPromptEnd;
+      tokenCount += openai.tokens(prompt);
+      /*const completion = await openai.complete(prompt, options);
+        const selected = completion.choices[0].text;
+        corrected.push(selected);
+        tokenCount += openai.tokens(selected);
+        */
     }
-    // TODO: Save token count used by this user for billing purposes
+    await fetch(import.meta.env.VITE_API_URL + `/items/tokens_used`, {
+      method: 'POST',
+      headers: {
+        "Authorization": `Bearer ${process.env.TOKEN_MANAGER_TOKEN}`,
+        'Content-Type': "application/json"
+      },
+      body: JSON.stringify({
+        user: id,
+        count: tokenCount
+      })
+    })
     return ({
       status: 200,
-      body: { data: parsed }
+      body: { data: corrected.join('\n'), tokensUsed: tokenCount, prompt }
     });
-  } catch (e) {
-    return ({ status: 500, body: e });
+  } catch ({ code = 500, message = 'Internal Server Error' }) {
+    console.log(code, message);
+    return ({ status: code, body: message });
   }
+}
+
+function prepareText(input: string) {
+  const removePageNumbers = input.replace(/^Page [0-9]*$\n\n/gm, '');
+  const removePageSeparators = removePageNumbers.replace(/^----*$\n/gm, '');
+  const removedTitle = removePageSeparators.replace(/^##(.*?)##$\n/gm, '');
+  const punctuateEndOfBullets = removedTitle.replace(/^- (.*)/gm, '- $1.');
+  const removeDoublePunct = punctuateEndOfBullets.replace(/([.?!])[.?!]/g, "$1")
+  const mergeOntoLines = removeDoublePunct.replace(/([A-Za-z])\s*\n([A-Za-z])/gm, "$1 $2");
+  const breakdownSentences = mergeOntoLines.split('\n');
+
+  const readyToSend: string[] = [];
+  let previousPhrase = '';
+  breakdownSentences.forEach(sentence => {
+    if (!sentence && !previousPhrase) return;
+    previousPhrase = sentence.trim();
+    readyToSend.push(sentence.trim());
+  })
+  return readyToSend;
 }

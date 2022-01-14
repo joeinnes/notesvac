@@ -6,6 +6,7 @@
 	import user from '../store/user';
 	import currentNote from '../store/currentNote';
 	import { goto } from '$app/navigation';
+	import tokensUsed from '../store/tokensUsed';
 	let notes = [];
 	let filter = '';
 	let loading = true;
@@ -23,6 +24,19 @@
 				sort: ['-date_created']
 			});
 			notes = fetchedData.data;
+			const { data } = await directus.items('tokens_used').readMany({
+				filter: {
+					user: {
+						_eq: $user.id
+					},
+					date_created: {
+						_gte: new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)
+					}
+				},
+				aggregate: { sum: 'count' }
+			});
+			const { sum } = data[0];
+			$tokensUsed = sum.count;
 		} catch (e) {
 			goto('/login');
 			console.log(e);
@@ -104,10 +118,24 @@
 				{/if}
 			</div>
 			<div
-				class="flex items-center p-4 bg-grayscale-400 text-xl shadow border-t border-grayscale-300"
+				class="flex justify-between items-center p-4 bg-grayscale-400 text-xl shadow border-t border-grayscale-300"
 			>
-				<UserCircle weight="duotone" />
-				<span class="ml-2 block">{$user?.first_name} {$user?.last_name}</span>
+				<div class="flex items-center">
+					<UserCircle weight="duotone" />
+					<span class="ml-2 block"
+						>{$user?.first_name}
+						{$user?.last_name}</span
+					>
+				</div>
+				<div>
+					{#if $tokensUsed}
+						<div class="flex flex-col items-end">
+							<span> {$tokensUsed.toLocaleString()}/{(100000).toLocaleString()}</span>
+
+							<progress class="rounded" value={$tokensUsed} max="100000" />
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 		<div class="w-2/3 p-4 pb-16 overscroll-none">

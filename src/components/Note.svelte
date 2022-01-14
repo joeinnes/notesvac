@@ -19,10 +19,11 @@
 	const enhance = async () => {
 		try {
 			working = true;
+			const access_token = directus.auth.token;
 
 			const result = await fetch('/api/enhance', {
 				method: 'POST',
-				body: JSON.stringify({ content: $currentNote.ocr }),
+				body: JSON.stringify({ content: $currentNote.ocr, access_token }),
 				headers: {
 					'Content-Type': 'application/json'
 				}

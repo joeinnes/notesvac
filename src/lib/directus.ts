@@ -12,8 +12,16 @@ type Note = {
   original_scan: string;
 };
 
+type TokensUsed = {
+  id: ID;
+  count: number;
+  user: ID;
+  date_created: Date;
+}
+
 type NotesVacApp = {
   notes: Note;
+  tokens_used: TokensUsed;
 }
 
 const url = "" + import.meta.env.VITE_API_URL;
