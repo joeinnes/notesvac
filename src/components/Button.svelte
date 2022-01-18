@@ -18,6 +18,9 @@
 <style lang="scss">
 	.btn {
 		@apply bg-grayscale-900 px-4 py-2 rounded text-grayscale-50 font-bold uppercase text-sm transition-colors duration-200 flex items-center shadow cursor-pointer w-full justify-center;
+		&:hover {
+			@apply bg-grayscale-700;
+		}
 
 		&.primary {
 			@apply bg-primary-500 text-primary-900;
@@ -28,6 +31,13 @@
 
 		&.secondary {
 			@apply bg-accent1-300 text-accent1-900;
+		}
+
+		&.accent {
+			@apply bg-accent2-300 text-accent2-900;
+			&:hover {
+				@apply bg-accent2-500 text-accent2-100;
+			}
 		}
 
 		&.submit {

@@ -2,8 +2,8 @@
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
 	let showFooter = false;
-	import '@fontsource/inconsolata';
-	import '@fontsource/karla';
+	//import '@fontsource/inconsolata';
+	//import '@fontsource/karla';
 	import '../app.css';
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
@@ -37,12 +37,3 @@
 		<Footer />
 	</div>
 </div>
-
-<style>
-	:global(body) {
-		font-family: 'Inconsolata', monospace;
-	}
-	:global(h1, h2, h3, h4, h5, h6) {
-		font-family: 'Karla', serif;
-	}
-</style>

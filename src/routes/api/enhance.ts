@@ -1,27 +1,26 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import openai from "../../lib/openai";
-const defaultPromptInitial = `Correct the sentences.
-
-Incorrect:
-I think WE GuT AWAY WITH !T BUT PLEASE Makes Sure UPDA4ES ARE TIMELY IN 2022.
-Correct:
-I think we got away with it but please make sure updates are timely in 2022.
+const defaultPromptInitial = `Make the original syntactically correct.
+Original: 
+I'LL BE DOING SOME HOUSEKEEPING CCANCELLINO & RESCHEDULING CALLS, ETC.) IN THE NEXT weak or so. IF ANYONE WANTS TO CHANGE TIMESLOT, PLEASE LET ME Know
+Syntactically correct: 
+I'll be doing some housekeeping (cancelling & rescheduling calls, etc.) in the next week or so. If anyone wants to change timeslot, please let me know
 ---
-Incorrect:
+Original:
 `
 const defaultPromptEnd = `
-Correct:`;
+Syntactically correct:`;
 const options = {
-  engine: 'davinci-instruct-beta-v3',
+  engine: 'curie-instruct-beta-v2',
   max_tokens: 200,
   temperature: 0,
-  top_p: 1,
+  top_p: 0,
   presence_penalty: 0,
   frequency_penalty: 0,
   best_of: 1,
   n: 1,
   stream: false,
-  stop: ['Correct:', 'Incorrect:', '---', 'Correct Sentences']
+  stop: ['Incorrect:', '---', 'Syntactically correct.']
 };
 export const post: RequestHandler = async function (request) {
   try {
@@ -41,6 +40,7 @@ export const post: RequestHandler = async function (request) {
     let tokenCount = 0;
     for (const item of contentArr) {
       const prompt = defaultPromptInitial + item + defaultPromptEnd;
+      if (!prompt) continue;
       tokenCount += openai.tokens(prompt);
       const completion = await openai.complete(prompt, options);
       const selected = completion.choices[0].text;
@@ -60,7 +60,7 @@ export const post: RequestHandler = async function (request) {
     })
     return ({
       status: 200,
-      body: { data: corrected.join('\n'), tokensUsed: tokenCount, prompt }
+      body: { data: corrected.join(''), tokensUsed: tokenCount }
     });
   } catch ({ code = 500, message = 'Internal Server Error' }) {
     console.log(code, message);
@@ -72,7 +72,7 @@ function prepareText(input: string) {
   const removePageNumbers = input.replace(/^Page [0-9]*$\n\n/gm, '');
   const removePageSeparators = removePageNumbers.replace(/^----*$\n/gm, '');
   const removedTitle = removePageSeparators.replace(/^##(.*?)##$\n/gm, '');
-  const punctuateEndOfBullets = removedTitle.replace(/^- (.*)/gm, '- $1.');
+  const punctuateEndOfBullets = removedTitle.replace(/^- (.*)^-/gm, '- $1.');
   const removeDoublePunct = punctuateEndOfBullets.replace(/([.?!])[.?!]/g, "$1")
   const mergeOntoLines = removeDoublePunct.replace(/([A-Za-z])\s*\n([A-Za-z])/gm, "$1 $2");
   const breakdownSentences = mergeOntoLines.split('\n');
@@ -86,3 +86,4 @@ function prepareText(input: string) {
   })
   return readyToSend;
 }
+

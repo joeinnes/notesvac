@@ -1,14 +1,18 @@
 <script lang="ts">
 	import directus from '$lib/directus';
 	import currentNote from '../store/currentNote';
+	import search from '../store/search';
 	import Button from './Button.svelte';
 	import { CircleWavyCheck, FloppyDisk, MagicWand } from 'phosphor-svelte';
 	import { browser } from '$app/env';
 	import tokensUsed from '../store/tokensUsed';
 	let editMode = false;
 	let working = false;
-	let correctedNote = '';
-	export let filter = '';
+	let correctedNote = {
+		corrected: '',
+		title: '',
+		date_created: null
+	};
 
 	let display = 'ocr';
 	if ($currentNote?.ai) display = 'ai';
@@ -45,14 +49,14 @@
 	const toggleEditMode = async () => {
 		if (editMode) {
 			// Post to server
-			directus.items('notes').updateOne($currentNote.id, {
-				corrected: correctedNote
-			});
+			directus.items('notes').updateOne($currentNote.id, correctedNote);
 			editMode = false;
-			$currentNote.corrected = correctedNote;
+			$currentNote.corrected = correctedNote.corrected;
 			display = 'corrected';
 		} else {
-			correctedNote = $currentNote[display];
+			correctedNote.title = $currentNote.title;
+			correctedNote.date_created = $currentNote.date_created;
+			correctedNote.corrected = $currentNote[display];
 			editMode = true;
 		}
 	};
@@ -92,32 +96,43 @@
 				class="bg-yellow-100 shadow rounded p-4 max-h-full overflow-y-auto"
 				style="scrollbar-gutter: stable"
 			>
-				<h3 class="text-3xl mb-4 font-extrabold">{$currentNote.title}</h3>
-				<div class="mb-4 font-extralight text-base-content text-xs">
-					{new Date($currentNote.date_created).toLocaleString('en-GB', {
-						weekday: 'short',
-						year: 'numeric',
-						month: 'short',
-						day: '2-digit',
-						hour: 'numeric',
-						minute: '2-digit',
-						hourCycle: 'h11'
-					})}
-				</div>
 				{#if editMode}
+					<h3
+						class="text-3xl mb-4 font-extrabold outline-none outline-accent2-700"
+						contenteditable="true"
+						bind:textContent={correctedNote.title}
+					>
+						{$currentNote.title}
+					</h3>
+					<div class="mb-4 font-extralight text-base-content text-xs">
+						<input type="datetime-local" bind:value={correctedNote.date_created} />
+					</div>
 					<div class="border rounded border-neutral max-w-prose">
 						<div
 							class="font-light whitespace-pre-line inline outline-none"
 							contenteditable="true"
-							bind:textContent={correctedNote}
+							bind:textContent={correctedNote.corrected}
 						>
 							{$currentNote[display]}
 						</div>
 					</div>
 				{:else}
+					<h3 class="text-3xl mb-4 font-extrabold">{$currentNote.title}</h3>
+
+					<div class="mb-4 font-extralight text-base-content text-xs">
+						{new Date($currentNote.date_created).toLocaleString('en-GB', {
+							weekday: 'short',
+							year: 'numeric',
+							month: 'short',
+							day: '2-digit',
+							hour: 'numeric',
+							minute: '2-digit',
+							hourCycle: 'h11'
+						})}
+					</div>
 					<div class="whitespace-pre-line font-light max-w-prose">
 						{@html $currentNote[display] &&
-							$currentNote[display].replaceAll(filter, `<span class='bg-accent'>${filter}</span>`)}
+							$currentNote[display].replaceAll($search, `<mark>${$search}</mark>`)}
 					</div>
 				{/if}
 			</div>
