@@ -22,9 +22,10 @@ const options = {
   stream: false,
   stop: ['Incorrect:', '---', 'Syntactically correct.']
 };
-export const post: RequestHandler = async function (request) {
+export const post: RequestHandler = async function ({ request }) {
   try {
-    const access_token = request.body.access_token;
+    const body = await request.json();
+    const access_token = body.access_token;
     if (!access_token) throw { code: 401, message: 'No access token provided' };
     const userResp = await fetch(import.meta.env.VITE_API_URL + '/users/me', {
       headers: {
@@ -34,8 +35,8 @@ export const post: RequestHandler = async function (request) {
     const { data } = await userResp.json();
     if (!data) throw { code: 404, message: 'No user data found' };
     const { id } = data;
-    if (!request.body.content) throw { code: 400, message: 'No content provided' };
-    const contentArr = prepareText(request.body.content);
+    if (!body.content) throw { code: 400, message: 'No content provided' };
+    const contentArr = prepareText(body.content);
     const corrected: string[] = [];
     let tokenCount = 0;
     for (const item of contentArr) {

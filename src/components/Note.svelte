@@ -51,16 +51,18 @@
 			// Post to server
 			directus.items('notes').updateOne($currentNote.id, correctedNote);
 			editMode = false;
-			$currentNote.corrected = correctedNote.corrected;
+			$currentNote = {...$currentNote, ...correctedNote};
 			display = 'corrected';
 		} else {
+			let date_created = new Date($currentNote.date_created);
 			correctedNote.title = $currentNote.title;
-			correctedNote.date_created = $currentNote.date_created;
+			correctedNote.date_created = date_created.toISOString().substr(0,date_created.toISOString().indexOf("."));
 			correctedNote.corrected = $currentNote[display];
 			editMode = true;
 		}
 	};
 	currentNote.subscribe((val) => {
+		editMode = false;
 		if (val?.ocr) display = 'ocr';
 		if (val?.ai) display = 'ai';
 		if (val?.corrected) display = 'corrected';
@@ -98,16 +100,18 @@
 			>
 				{#if editMode}
 					<h3
-						class="text-3xl mb-4 font-extrabold outline-none outline-accent2-700"
+						class="text-3xl font-extrabold outline-none outline-accent2-700 p-2 rounded py-1"
 						contenteditable="true"
 						bind:textContent={correctedNote.title}
 					>
 						{$currentNote.title}
 					</h3>
-					<div class="mb-4 font-extralight text-base-content text-xs">
-						<input type="datetime-local" bind:value={correctedNote.date_created} />
+					<div class="font-extralight text-base-content text-xs h-12 flex flex-col justify-center">
+					<div class="relative">
+					<label for="date_created" class="hidden">Date:&nbsp;</label>
+						<input type="datetime-local" bind:value={correctedNote.date_created} id="date_created" class="bg-transparent outline-none outline-accent2-700 py-1 rounded text-right" /></div>
 					</div>
-					<div class="border rounded border-neutral max-w-prose">
+					<div class="outline-none p-2 rounded outline-accent2-700 max-w-prose py-1">
 						<div
 							class="font-light whitespace-pre-line inline outline-none"
 							contenteditable="true"
@@ -117,9 +121,11 @@
 						</div>
 					</div>
 				{:else}
-					<h3 class="text-3xl mb-4 font-extrabold">{$currentNote.title}</h3>
+					<h3 class="text-3xl font-extrabold p-2 py-1">{$currentNote.title}</h3>
 
-					<div class="mb-4 font-extralight text-base-content text-xs">
+					<div class="font-extralight text-base-content text-xs p-2 py-1 h-12 flex flex-col justify-center">
+					<div>
+					<span class="py-1">
 						{new Date($currentNote.date_created).toLocaleString('en-GB', {
 							weekday: 'short',
 							year: 'numeric',
@@ -129,8 +135,10 @@
 							minute: '2-digit',
 							hourCycle: 'h11'
 						})}
+						</span>
+						</div>
 					</div>
-					<div class="whitespace-pre-line font-light max-w-prose">
+					<div class="whitespace-pre-line font-light max-w-prose p-2 py-1">
 						{@html $currentNote[display] &&
 							$currentNote[display].replaceAll($search, `<mark>${$search}</mark>`)}
 					</div>
@@ -164,5 +172,14 @@
 <style lang="scss">
 	select {
 		@apply px-4 py-2 rounded border-grayscale-800 border outline-accent2-700;
+	}
+	input[type="datetime-local"] {
+		&::-webkit-calendar-picker-indicator{
+			
+			position: absolute;
+			/* This next line is essentially unsetting the padding */
+			left: -1.5rem;
+		}
+
 	}
 </style>

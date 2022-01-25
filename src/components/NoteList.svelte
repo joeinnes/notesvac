@@ -37,8 +37,9 @@
 			config.search = searchString;
 		} catch (e) {
 			if (authFailed) {
+				console.log('Auth failed and could not refresh. Routing to login');
+
 				if (browser) goto('/login');
-				console.log('Auth failed and could not refresh.');
 				return;
 			}
 			authFailed = true;
@@ -55,7 +56,7 @@
 			const fetchedData = await directus.items('notes').readMany(config);
 			return fetchedData;
 		} catch (e) {
-			console.error(e);
+			console.error("Couldn't get Notes");
 			return null;
 		}
 	};
