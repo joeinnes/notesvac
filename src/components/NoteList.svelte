@@ -11,7 +11,7 @@
 	import Button from './Button.svelte';
 	import NotePreview from './NotePreview.svelte';
 
-	const limit = 7;
+	const limit = 10;
 	let page = 1;
 	let formerSearch = '';
 	const config = {
@@ -70,6 +70,8 @@
 	$: getNotes(page, $search);
 </script>
 
+<div class="h-full flex flex-col">
+<div class="px-8">
 <h2 class="text-2xl font-extrabold">Your Notes</h2>
 
 <input
@@ -78,6 +80,7 @@
 	on:input={handleInput}
 	class="w-full hover:scale-105 transition-transform duration-200"
 />
+</div>
 {#await getNotes(page, $search)}
 	<div class="w-full flex items-center justify-center pt-8">
 		<span class="animate-spin">
@@ -87,11 +90,15 @@
 {:then fetchedData}
 	{@const { meta } = fetchedData}
 	{@const notes = fetchedData.data}
-	{#each notes as note, index}
-		<NotePreview {note} hasBorder={index !== notes.length - 1} />
-	{/each}
-	<div class="flex justify-between items-center text-center">
+		<div class="flex flex-col flex-1 h-full overflow-y-scroll overflow-x-hidden pl-8 pr-2">
+			{#each notes as note, index}
+				<NotePreview {note} hasBorder={index !== notes.length - 1} />
+			{/each}
+		</div>
+	
+	
 		{#if fetchedData.meta.filter_count > limit}
+		<div class="flex justify-between items-center text-center px-8 pt-4">
 			<div>
 				<Button type="accent" disabled={page === 1} clickHandler={() => page--}>Previous</Button>
 			</div>
@@ -105,11 +112,14 @@
 					clickHandler={() => page++}>Next</Button
 				>
 			</div>
+		</div>
 		{/if}
-	</div>
+		
+	
 {:catch e}
 	<pre>{e}</pre>
 {/await}
+</div>
 
 <style lang="scss">
 	input {

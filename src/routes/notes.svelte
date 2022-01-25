@@ -12,7 +12,7 @@
 <div class="flex flex-col flex-1 items-stretch h-full">
 	<div class="flex flex-1 items-stretch h-full">
 		<div class="w-1/3 bg-grayscale-100 self-stretch h-full shadow flex flex-col">
-			<div class="flex-1 h-full py-4 px-8">
+			<div class="flex-1 overflow-y-hidden h-full py-4 ">
 				<NoteList />
 			</div>
 			<div
