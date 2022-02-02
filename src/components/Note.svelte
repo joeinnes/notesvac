@@ -18,9 +18,6 @@
 	if ($currentNote?.ai) display = 'ai';
 	if ($currentNote?.corrected) display = 'corrected';
 	let auth_token = '';
-	if (browser) {
-		auth_token = localStorage.getItem('auth_token');
-	}
 	const enhance = async () => {
 		try {
 			working = true;
@@ -66,6 +63,10 @@
 		if (val?.ocr) display = 'ocr';
 		if (val?.ai) display = 'ai';
 		if (val?.corrected) display = 'corrected';
+		// Reload the token
+		if (browser) {
+			auth_token = localStorage.getItem('auth_token');
+		}
 	});
 </script>
 

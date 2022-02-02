@@ -20,7 +20,7 @@ const options = {
   best_of: 1,
   n: 1,
   stream: false,
-  stop: ['Incorrect:', '---', 'Syntactically correct.']
+  stop: ['Original:', '---', 'Syntactically correct:']
 };
 export const post: RequestHandler = async function ({ request }) {
   try {
